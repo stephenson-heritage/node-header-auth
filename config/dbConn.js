@@ -3,7 +3,7 @@ let dbConn = {
 	user: 'root',
 	password: '',
 	connectionLimit: 5,
-	database: 'headers',
+	database: 'headerauth',
 };
 
 module.exports = dbConn;

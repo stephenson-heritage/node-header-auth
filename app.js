@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const app = express();
 const port = 9000;
 
+const auth = require('./middleware/auth');
+
 const User = require('./model/User');
 const e = require('express');
 
@@ -14,34 +16,25 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(express.json());
 
+app.use(auth);
 
 app.get('/login', async (req, res) => {
 
-	if (req.headers.authorization) {
-		let raw = req.headers.authorization.split(' ')[1];
-		raw = Buffer.from(raw, "base64").toString();
-		// ${user}:${pwd}
-		let up = raw.split(":");
+	res.json(req.auth);
 
-		const user = up[0];
-		const hash = crypto.createHash("sha256").update(up[1]).digest("hex");
+});
 
-		//console.log(user, hash);
+app.get('/secrets', (req, res) => {
+	if (req.auth.isAuth) {
 
-		let userData = await User.getUser(user, hash);
 
-		if (userData.user != null) {
-			res.json({ auth: true, user: userData });
-		} else {
-			r = { auth: false }
-			res.json(r);
-		}
 
+
+
+		res.json({ allowed: "allowed" });
 	} else {
-		r = { auth: false }
-		res.json(r);
+		res.sendStatus(403);
 	}
-
 });
 
 

@@ -2,7 +2,10 @@ const User = require('../model/User');
 const crypto = require('crypto');
 
 module.exports = async (req, res, next) => {
-    if (req.headers.authorization) {
+
+    const auth = { isAuth: false };
+
+    if (req && req.headers.authorization) {
         let raw = req.headers.authorization.split(' ')[1];
         raw = Buffer.from(raw, "base64").toString();
         // ${user}:${pwd}
@@ -16,14 +19,12 @@ module.exports = async (req, res, next) => {
         let userData = await User.getUser(user, hash);
 
         if (userData.user != null) {
-            res.json({ auth: true, user: userData });
-        } else {
-            r = { auth: false }
-            res.json(r);
+            // user validated
+            auth.isAuth = true;
+            auth.user = userData.user;
         }
-
-    } else {
-        r = { auth: false }
-        res.json(r);
     }
+
+    req.auth = auth;
+    next();
 }

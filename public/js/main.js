@@ -1,19 +1,32 @@
+let u = "", p = ""
+
 window.addEventListener('load', async (e) => {
 
-	const user = "bob", pwd = "1234";
+	document.getElementById("login").addEventListener("click", async (e) => {
+		let user = document.getElementById("user").value;
+		let pass = document.getElementById("pass").value;
+		const loginInfo = btoa(`${user}:${pass}`);
 
-	const loginInfo = btoa(`${user}:${pwd}`);
 
+		let reqHeaders = await fetch('/login', {
+			method: "get",
+			headers: {
+				"Authorization": `Basic ${loginInfo}`,
+				"Content-Type": `application/json`
+			}
+		});
 
-	let reqHeaders = await fetch('/login', {
-		method: "get",
-		headers: {
-			"Authorization": `Basic ${loginInfo}`,
-			"Content-Type": `application/json`
+		let data = await reqHeaders.json();
+
+		if (data.isAuth) {
+			u = user;
+			p = pass;
 		}
+		console.log(data);
+
 	});
 
-	let data = await reqHeaders.json();
+	//const user = "bob", pwd = "1234";
 
-	console.log(data);
+
 });

@@ -24,7 +24,7 @@ app.get('/login', async (req, res) => {
 
 });
 
-app.get('/secrets', (req, res) => {
+app.get('/createuser', (req, res) => {
 	if (req.auth.isAuth) {
 
 
